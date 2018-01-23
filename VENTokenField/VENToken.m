@@ -26,9 +26,15 @@
 @property (strong, nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
 @property (strong, nonatomic) IBOutlet UILabel *titleLabel;
 @property (strong, nonatomic) IBOutlet UIView *backgroundView;
+@property (strong, nonatomic) IBOutlet UIButton *clearButton;
 @end
 
 @implementation VENToken
+
+-(void)setFrame:(CGRect)frame{
+    super.frame = frame;
+}
+
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -47,6 +53,7 @@
     self.colorScheme = [UIColor blueColor];
     self.titleLabel.textColor = self.colorScheme;
     [self addGestureRecognizer:self.tapGestureRecognizer];
+    [self.clearButton addTarget:self action:@selector(didTapClearButton:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setTitleText:(NSString *)text
@@ -54,7 +61,7 @@
     self.titleLabel.text = text;
     self.titleLabel.textColor = self.colorScheme;
     [self.titleLabel sizeToFit];
-    self.frame = CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetMaxX(self.titleLabel.frame) + 3, CGRectGetHeight(self.frame));
+    self.frame = CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetMaxX(self.titleLabel.frame) + 20, CGRectGetHeight(self.frame));
     [self.titleLabel sizeToFit];
 }
 
@@ -83,5 +90,13 @@
         self.didTapTokenBlock();
     }
 }
+
+-(void)didTapClearButton:(UIButton*)owner{
+    if (self.didTapClearBlock) {
+        self.didTapClearBlock();
+    }
+}
+
+
 
 @end

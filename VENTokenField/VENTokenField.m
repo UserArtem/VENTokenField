@@ -71,7 +71,7 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 
 - (BOOL)becomeFirstResponder
 {
-    [self layoutTokensAndInputWithFrameAdjustment:YES];
+    [self layoutTokensAndInputWithFrameAdjustment:NO];
     [self inputTextFieldBecomeFirstResponder];
     return YES;
 }
@@ -161,6 +161,14 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 {
     _inputTextFieldAccessoryView = inputTextFieldAccessoryView;
     self.inputTextField.inputAccessoryView = _inputTextFieldAccessoryView;
+    self.invisibleTextField.inputAccessoryView = _inputTextFieldAccessoryView;
+}
+
+- (void)setInputTextFieldView:(UIView *)inputTextFieldView
+{
+    _inputTextFieldView = inputTextFieldView;
+    self.inputTextField.inputView = _inputTextFieldView;
+    self.invisibleTextField.inputView = _inputTextFieldView;
 }
 
 - (NSString *)inputText
@@ -306,6 +314,24 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
         token.didTapTokenBlock = ^{
             [weakSelf didTapToken:weakToken];
         };
+        token.didTapClearBlock = ^{
+            if ([self.delegate respondsToSelector:@selector(tokenField:didDeleteTokenAtIndex:)] && [self numberOfTokens]) {
+                BOOL didDeleteToken = NO;
+                for (VENToken *t in self.tokens) {
+                    if (t == token) {
+                        [self.delegate tokenField:self didDeleteTokenAtIndex:[self.tokens indexOfObject:t]];
+                        didDeleteToken = YES;
+                        break;
+                    }
+                }
+                if (!didDeleteToken) {
+                    VENToken *lastToken = [self.tokens lastObject];
+                    lastToken.highlighted = YES;
+                }
+                [self setCursorVisibility];
+            }
+            
+        };
 
         [token setTitleText:[NSString stringWithFormat:@"%@,", title]];
         token.colorScheme = [self colorSchemeForTokenAtIndex:i];
@@ -341,6 +367,8 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
     self.invisibleTextField = [[VENBackspaceTextField alloc] initWithFrame:CGRectZero];
     [self.invisibleTextField setAutocorrectionType:self.autocorrectionType];
     [self.invisibleTextField setAutocapitalizationType:self.autocapitalizationType];
+    [self.invisibleTextField setInputView:_inputTextFieldView];
+    [self.invisibleTextField setInputAccessoryView:_inputTextFieldAccessoryView];
     self.invisibleTextField.backspaceDelegate = self;
     [self addSubview:self.invisibleTextField];
 }
@@ -413,6 +441,7 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
         _inputTextField.placeholder = self.placeholderText;
         _inputTextField.accessibilityLabel = self.inputTextFieldAccessibilityLabel ?: NSLocalizedString(@"To", nil);
         _inputTextField.inputAccessoryView = self.inputTextFieldAccessoryView;
+        _inputTextField.inputView = self.inputTextFieldView;
         [_inputTextField addTarget:self action:@selector(inputTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     }
     return _inputTextField;
