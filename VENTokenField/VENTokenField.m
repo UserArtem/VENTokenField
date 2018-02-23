@@ -334,10 +334,9 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
                 }
                 [self setCursorVisibility];
             }
-            
         };
 
-        [token setTitleText:[NSString stringWithFormat:@"%@,", title]];
+        [token setTitleText:[NSString stringWithFormat:@"%@", title]];
         token.colorScheme = [self colorSchemeForTokenAtIndex:i];
         
         [self.tokens addObject:token];
