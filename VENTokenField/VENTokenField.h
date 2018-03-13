@@ -76,6 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) UIColor *inputTextFieldTextColor;
 
 @property (strong, nonatomic) UILabel *toLabel;
+@property (strong, nonatomic) UIFont *textFont;
 
 @property (strong, nonatomic, nullable) NSArray *delimiters;
 @property (copy, nonatomic, nullable) NSString *placeholderText;
