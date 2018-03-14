@@ -157,6 +157,16 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
     }
 }
 
+- (void)setTextFont:(UIFont *)font
+{
+    _textFont = font;
+    self.collapsedLabel.font = font;
+    self.inputTextField.font = font;
+    for (VENToken *token in self.tokens) {
+        token.textFont = font;
+    }
+}
+
 - (void)setInputTextFieldAccessoryView:(UIView *)inputTextFieldAccessoryView
 {
     _inputTextFieldAccessoryView = inputTextFieldAccessoryView;
@@ -275,6 +285,7 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
     }
     inputTextField.frame = CGRectMake(*currentX, *currentY + 1, inputTextFieldWidth, [self heightForToken] - 1);
     inputTextField.tintColor = self.colorScheme;
+    inputTextField.font = self.textFont ? self.textFont : [UIFont fontWithName:@"HelveticaNeue" size:15.5];
     [self.scrollView addSubview:inputTextField];
 }
 
@@ -335,7 +346,8 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
                 [self setCursorVisibility];
             }
         };
-
+        
+        token.textFont = self.textFont ? self.textFont : [UIFont fontWithName:@"HelveticaNeue" size:15.5];
         [token setTitleText:[NSString stringWithFormat:@"%@", title]];
         token.colorScheme = [self colorSchemeForTokenAtIndex:i];
         
